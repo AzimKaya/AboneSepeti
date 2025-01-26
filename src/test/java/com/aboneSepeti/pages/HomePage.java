@@ -11,9 +11,15 @@ public class HomePage {
         PageFactory.initElements(Driver.getDriver(), this);
     }
     
-    @FindBy(linkText = "Aboneliklerini Yönet")
+    @FindBy(css = "button.px-8.bg-primary-500")
+    public WebElement cerezKabulBtn;
+    
+    @FindBy(css = "a[href*='ozellikler/aboneliklerini-yonet']")
     public WebElement abonelikleriniYonetBtn;
     
-    @FindBy(css = "h1.page-title")
-    public WebElement pageTitle;
+    @FindBy(css = "h1")
+    public WebElement faturaTakibiBaslik;
+    
+    @FindBy(xpath = "//a[text()='Uygulamaya Git']")
+    public WebElement uygulamayaGitBtn;
 }

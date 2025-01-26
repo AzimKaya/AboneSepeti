@@ -1,113 +1,99 @@
 package com.aboneSepeti.stepDefinitions;
 
 import io.cucumber.java.tr.*;
-import org.junit.Assert;
-import com.aboneSepeti.pages.HomePage;
-import com.aboneSepeti.utilities.Driver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
+import com.aboneSepeti.pages.HomePage;
+import com.aboneSepeti.utilities.Driver;
 import java.time.Duration;
 import java.util.List;
 
 public class FaturaTakibiSteps {
-    
-    HomePage homePage = new HomePage();
-    WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(20));
-    Actions actions = new Actions(Driver.getDriver());
-    
+    private HomePage homePage = new HomePage();
+    private WebDriver driver = Driver.getDriver();
+    private WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
     @Diyelimki("kullanıcı AboneSepeti ana sayfasında")
     public void kullaniciAnaSayfada() {
-        Driver.getDriver().get("https://abonesepeti.com/tr");
-        // Sayfanın tamamen yüklenmesini bekle
-        wait.until(webDriver -> ((JavascriptExecutor) webDriver)
-            .executeScript("return document.readyState").equals("complete"));
-            
-        System.out.println("Ana sayfa açıldı. URL: " + Driver.getDriver().getCurrentUrl());
+        driver.get("https://abonesepeti.com/tr");
+        System.out.println("Ana sayfa açıldı. URL: " + driver.getCurrentUrl());
         
-        // Tüm butonları ve linkleri listele
-        List<WebElement> allElements = Driver.getDriver().findElements(By.cssSelector("a, button"));
-        System.out.println("\nSayfadaki tüm butonlar ve linkler:");
-        for (WebElement element : allElements) {
-            System.out.println("Element text: " + element.getText());
-            System.out.println("Element class: " + element.getAttribute("class"));
-            System.out.println("Element href: " + element.getAttribute("href"));
-            System.out.println("---");
-        }
+        // Sayfanın yüklenmesini bekle
+        wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                .executeScript("return document.readyState").equals("complete"));
     }
-    
+
     @Ve("kullanıcı Aboneliklerini Yönet butonuna tıklar")
     public void kullaniciAbonelikleriniYonetButonunaTiklar() {
         try {
-            // Sayfanın yüklenmesini bekle
+            // Çerez kabul butonu görünür ve tıklanabilir olana kadar bekle
             try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                WebElement cerezBtn = wait.until(ExpectedConditions.elementToBeClickable(homePage.cerezKabulBtn));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", cerezBtn);
+                Thread.sleep(1000); // Çerez banner'ının kaybolmasını bekle
+            } catch (TimeoutException e) {
+                System.out.println("Çerez kabul butonu bulunamadı veya zaten kabul edilmiş olabilir");
             }
+
+            // Tüm linkleri kontrol et
+            List<WebElement> links = driver.findElements(By.tagName("a"));
+            WebElement targetLink = null;
             
-            // Aboneliklerini Yönet linkini bul
-            WebElement abonelikLink = Driver.getDriver().findElement(
-                By.cssSelector("a[href*='aboneliklerini-yonet']"));
-            
-            if (abonelikLink != null && abonelikLink.isDisplayed()) {
-                // Linke tıkla
-                actions.moveToElement(abonelikLink).click().perform();
-                System.out.println("Aboneliklerini Yönet linkine tıklandı");
-                
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+            for (WebElement link : links) {
+                String href = link.getAttribute("href");
+                if (href != null && href.contains("aboneliklerini-yonet")) {
+                    targetLink = link;
+                    System.out.println("Hedef link bulundu: " + href);
+                    break;
                 }
-                return;
             }
-            
-            throw new RuntimeException("Aboneliklerini Yönet linki bulunamadı veya tıklanamadı!");
+
+            if (targetLink == null) {
+                throw new RuntimeException("Aboneliklerini Yönet linki bulunamadı!");
+            }
+
+            // Linke scroll yap ve tıkla
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", targetLink);
+            Thread.sleep(1000);
+
+            // JavaScript ile tıkla
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", targetLink);
+            Thread.sleep(1000);
+
         } catch (Exception e) {
-            System.out.println("Hata oluştu: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
+            System.out.println("Aboneliklerini Yönet butonuna tıklanamadı: " + e.getMessage());
+            throw new RuntimeException("Aboneliklerini Yönet butonuna tıklanamadı!");
         }
     }
-    
+
     @Ozaman("Fatura Takibi sayfasının açıldığını doğrula")
     public void faturaTakibiSayfasininAcildiginiDogrula() {
         try {
-            Thread.sleep(2000);
+            // Sayfanın yüklenmesini bekle
+            wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                    .executeScript("return document.readyState").equals("complete"));
             
-            String currentUrl = Driver.getDriver().getCurrentUrl();
-            System.out.println("\nMevcut URL: " + currentUrl);
-            
-            // Sayfadaki tüm metinleri ve URL'yi kontrol et
-            String pageSource = Driver.getDriver().getPageSource().toLowerCase();
-            boolean isSuccess = currentUrl.toLowerCase().contains("fatura") || 
-                              currentUrl.toLowerCase().contains("abonelik") ||
-                              pageSource.contains("fatura") ||
-                              pageSource.contains("abonelik");
-                              
-            if (!isSuccess) {
-                System.out.println("\nSayfa içeriği ve elementleri:");
-                List<WebElement> elements = Driver.getDriver().findElements(By.cssSelector("*"));
-                for (WebElement element : elements) {
-                    if (!element.getText().trim().isEmpty()) {
-                        System.out.println("Element text: " + element.getText());
-                    }
-                }
+            // URL kontrolü
+            String currentUrl = driver.getCurrentUrl();
+            if (!currentUrl.contains("fatura") && !currentUrl.contains("abonelik")) {
+                throw new RuntimeException("Yanlış sayfadayız: " + currentUrl);
             }
             
-            Assert.assertTrue("Fatura Takibi sayfası açılmadı!", isSuccess);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
+            System.out.println("Fatura Takibi sayfası başarıyla açıldı");
+        } catch (Exception e) {
+            System.out.println("Fatura Takibi sayfası açılamadı: " + e.getMessage());
+            throw new RuntimeException("Fatura Takibi sayfası açılamadı!");
         }
     }
-    
+
     @Ozaman("tarayıcıyı kapat")
     public void tarayiciyiKapat() {
-        Driver.closeDriver();
+        try {
+            Driver.closeDriver();
+            System.out.println("Tarayıcı başarıyla kapatıldı");
+        } catch (Exception e) {
+            System.out.println("Tarayıcı kapatılırken hata oluştu: " + e.getMessage());
+        }
     }
 }
