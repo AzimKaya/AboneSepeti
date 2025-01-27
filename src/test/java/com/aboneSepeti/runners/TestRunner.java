@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "src/test/resources/features/uygulamayaGit.feature",
+        features = "src/test/resources/features/headerButonlari.feature",
         glue = "com.aboneSepeti.stepDefinitions",
         plugin = {"pretty", "html:target/cucumber-reports"}
 )

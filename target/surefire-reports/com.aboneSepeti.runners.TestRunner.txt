@@ -1,9 +1,11 @@
 -------------------------------------------------------------------------------
 Test set: com.aboneSepeti.runners.TestRunner
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 10.14 s <<< FAILURE! -- in com.aboneSepeti.runners.TestRunner
-Fatura Takibi Sayfası Kontrolü.Aboneliklerini Yönet üzerinden Fatura Takibi sayfasına erişim -- Time elapsed: 9.510 s <<< ERROR!
-java.lang.RuntimeException: Abonelik veya fatura sayfasına erişilemedi!
-	at com.aboneSepeti.stepDefinitions.FaturaTakibiSteps.kullaniciAbonelikleriniYonetButonunaTiklar(FaturaTakibiSteps.java:119)
-	at ✽.kullanıcı Aboneliklerini Yönet butonuna tıklar(file:///C:/Users/Azim%20Kaya/Desktop/Abone%20Sepeti/src/test/resources/features/faturaTakibi.feature:6)
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 61.53 s <<< FAILURE! -- in com.aboneSepeti.runners.TestRunner
+Header butonları fonksiyonları.Header butonlarının çalışması kontrolü -- Time elapsed: 60.63 s <<< FAILURE!
+java.lang.AssertionError: URL özellikler içermiyor: https://abonesepeti.com/tr
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.aboneSepeti.stepDefinitions.HeaderButonlariSteps.ozelliklerSayfasininAcildiginiDogrula(HeaderButonlariSteps.java:140)
+	at ✽.Özellikler sayfasının açıldığını doğrula(file:///C:/Users/Azim%20Kaya/Desktop/Abone%20Sepeti/src/test/resources/features/headerButonlari.feature:8)
 

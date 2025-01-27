@@ -1,4 +1,7 @@
-com\aboneSepeti\runners\TestRunner.class
 com\aboneSepeti\pages\HomePage.class
+com\aboneSepeti\stepDefinitions\UygulamayaGitSteps.class
+com\aboneSepeti\stepDefinitions\HeaderButonlariSteps.class
+com\aboneSepeti\stepDefinitions\HemenUcretsizIndirSteps.class
+com\aboneSepeti\runners\TestRunner.class
 com\aboneSepeti\stepDefinitions\FaturaTakibiSteps.class
 com\aboneSepeti\utilities\Driver.class
